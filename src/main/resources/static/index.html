@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>RAG Demo</title>
+  <link rel="stylesheet" href="/styles.css"/>
+</head>
+<body>
+<div id="app">
+  <!-- Left sidebar -->
+  <aside id="sidebar">
+    <div id="sidebar-header">
+      <span class="brand">⚡ RAG Demo</span>
+      <button id="btn-new-chat" title="New Chat">＋</button>
+    </div>
+    <div id="chat-list"></div>
+  </aside>
+
+  <!-- Main panel -->
+  <main id="main">
+    <!-- Empty state -->
+    <div id="empty-state">
+      <div class="empty-icon">🤖</div>
+      <h2>Select or create a chat</h2>
+      <p>Upload documents, ask questions, explore your codebase.</p>
+    </div>
+
+    <!-- Chat view (hidden until chat selected) -->
+    <div id="chat-view" class="hidden">
+      <!-- Top bar: title + model selector -->
+      <div id="chat-topbar">
+        <span id="chat-title-display"></span>
+        <div id="model-selector-wrap">
+          <label for="model-select">Model:</label>
+          <select id="model-select"></select>
+        </div>
+      </div>
+
+      <!-- Messages area -->
+      <div id="messages-area"></div>
+
+      <!-- Sources panel (collapsible) -->
+      <div id="sources-bar">
+        <button id="btn-toggle-sources">📎 Sources <span id="sources-count">0</span></button>
+        <div id="sources-list" class="hidden"></div>
+      </div>
+
+      <!-- Input bar -->
+      <div id="input-area">
+        <div id="pending-attachment" class="hidden"></div>
+
+        <div id="input-bar">
+          <div id="plus-wrap">
+            <button id="btn-plus" title="Add content">＋</button>
+            <div id="plus-menu" class="hidden">
+              <button id="menu-upload-file">📄 Upload file (PDF / TXT)</button>
+              <button id="menu-google-doc">🔗 Add Google Doc URL</button>
+              <button id="menu-add-text">📝 Add plain text</button>
+            </div>
+          </div>
+
+          <input type="file" id="message-file-input" hidden>
+          <textarea id="input-text" placeholder="Ask a question…" rows="1"></textarea>
+          <button id="btn-send" title="Send">➤</button>
+        </div>
+      </div>
+    </div>
+  </main>
+</div>
+
+<!-- Modals -->
+<div id="modal-overlay" class="hidden">
+  <!-- Upload file modal -->
+  <div id="modal-file" class="modal hidden">
+    <h3>Upload Document</h3>
+    <input type="file" id="file-input" accept=".pdf,.txt,.md"/>
+    <div id="file-name-display" class="file-name-hint"></div>
+    <div class="modal-actions">
+      <button id="btn-file-cancel" class="btn-secondary">Cancel</button>
+      <button id="btn-file-upload" class="btn-primary">Upload &amp; Index</button>
+    </div>
+  </div>
+
+  <!-- Google Doc modal -->
+  <div id="modal-google-doc" class="modal hidden">
+    <h3>Add Google Doc</h3>
+    <label>Name <input type="text" id="gdoc-name" placeholder="My Document"/></label>
+    <label>Google Doc URL <input type="text" id="gdoc-url" placeholder="https://docs.google.com/document/d/…"/></label>
+    <p class="hint">Note: Google Docs integration requires OAuth configuration. Without it a stub will be indexed.</p>
+    <div class="modal-actions">
+      <button id="btn-gdoc-cancel" class="btn-secondary">Cancel</button>
+      <button id="btn-gdoc-submit" class="btn-primary">Add &amp; Index</button>
+    </div>
+  </div>
+
+  <!-- Add text modal -->
+  <div id="modal-text" class="modal hidden">
+    <h3>Add Plain Text</h3>
+    <label>Name <input type="text" id="text-name" placeholder="Document title"/></label>
+    <label>Content <textarea id="text-content" rows="8" placeholder="Paste your text here…"></textarea></label>
+    <div class="modal-actions">
+      <button id="btn-text-cancel" class="btn-secondary">Cancel</button>
+      <button id="btn-text-submit" class="btn-primary">Add &amp; Index</button>
+    </div>
+  </div>
+
+  <!-- New chat modal -->
+  <div id="modal-new-chat" class="modal hidden">
+    <h3>New Chat</h3>
+    <label>Title <input type="text" id="new-chat-title" placeholder="My Chat"/></label>
+    <label>Model <select id="new-chat-model"></select></label>
+    <div class="modal-actions">
+      <button id="btn-new-chat-cancel" class="btn-secondary">Cancel</button>
+      <button id="btn-new-chat-create" class="btn-primary">Create</button>
+    </div>
+  </div>
+</div>
+
+<!-- Hidden file input for direct upload -->
+<input type="file" id="direct-file-input" accept=".pdf,.txt,.md" style="display:none"/>
+
+<script src="/app.js"></script>
+</body>
+</html>
