@@ -1,7 +1,7 @@
-package com.gen.ai.chatbot.controllers;
+package com.gen.ai.chatbot.controller;
 
 import com.gen.ai.chatbot.dto.mode.ModeResponseDto;
-import com.gen.ai.chatbot.services.ModeService;
+import com.gen.ai.chatbot.service.ModeService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
