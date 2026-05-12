@@ -1,4 +1,4 @@
-package com.gen.ai.chatbot.services;
+package com.gen.ai.chatbot.service;
 
 import com.gen.ai.chatbot.entity.Mode;
 import com.gen.ai.chatbot.dto.mode.ModeResponseDto;
