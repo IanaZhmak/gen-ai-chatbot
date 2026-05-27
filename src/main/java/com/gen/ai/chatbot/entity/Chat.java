@@ -11,7 +11,7 @@ public class Chat {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     public long id;
     public String title;
-    public String modelKey;
+    public String modeKey;
 
     @OneToMany(mappedBy = "chat", cascade = CascadeType.ALL)
     public List<Message> messages;
