@@ -13,6 +13,8 @@ public class Message {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     public long id;
+
+    @Column(columnDefinition = "TEXT")
     public String text;
 
     @ManyToOne(fetch = FetchType.LAZY)
