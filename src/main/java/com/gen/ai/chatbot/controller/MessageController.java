@@ -1,8 +1,8 @@
-package com.gen.ai.chatbot.controllers;
+package com.gen.ai.chatbot.controller;
 
 import com.gen.ai.chatbot.dto.message.MessageRequestDto;
 import com.gen.ai.chatbot.dto.message.MessageResponseDto;
-import com.gen.ai.chatbot.services.MessageService;
+import com.gen.ai.chatbot.service.MessageService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
