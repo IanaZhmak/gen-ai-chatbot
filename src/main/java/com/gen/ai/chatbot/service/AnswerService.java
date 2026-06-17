@@ -3,22 +3,19 @@ package com.gen.ai.chatbot.service;
 import com.gen.ai.chatbot.entity.Role;
 import com.gen.ai.chatbot.entity.Chat;
 import com.gen.ai.chatbot.entity.Message;
-import com.gen.ai.chatbot.repository.ChatRepository;
 import com.gen.ai.chatbot.repository.MessageRepository;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 @Service
 public class AnswerService {
 
-    @Autowired
-    private MessageRepository messageRepository;
+    private final MessageRepository messageRepository;
+    private final ChatModeService chatModeService;
 
-    @Autowired
-    private ChatRepository chatRepository;
-
-    @Autowired
-    private ChatModeService chatModeService;
+    public AnswerService(MessageRepository messageRepository, ChatModeService chatModeService) {
+        this.messageRepository = messageRepository;
+        this.chatModeService = chatModeService;
+    }
 
     public Message sendAnswer(Chat chat, String question) {
         String answerString = chatModeService.process(question, chat.modeKey, chat.id);
