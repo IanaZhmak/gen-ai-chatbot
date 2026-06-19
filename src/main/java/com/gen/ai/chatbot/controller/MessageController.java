@@ -3,24 +3,31 @@ package com.gen.ai.chatbot.controller;
 import com.gen.ai.chatbot.dto.message.MessageRequestDto;
 import com.gen.ai.chatbot.dto.message.MessageResponseDto;
 import com.gen.ai.chatbot.service.MessageService;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
 @RestController
+@RequestMapping("/api/chats")
 public class MessageController {
 
-    @Autowired
-    private MessageService messageService;
+    private final MessageService messageService;
 
-    @PostMapping("/api/chats/{chatId}/messages")
-    public MessageResponseDto createMessage(@RequestParam(value = "question", required = false) MessageRequestDto messageRequest, @PathVariable Long chatId, @RequestParam(value = "file", required = false) MultipartFile file) {
-        return messageService.sendMessage(messageRequest, chatId, file);
+    public MessageController(MessageService messageService) {
+        this.messageService = messageService;
     }
 
-    @GetMapping("/api/chats/{chatId}/messages")
+    @PostMapping("/{chatId}/messages")
+    public ResponseEntity<MessageResponseDto> createMessage(@RequestParam(value = "question", required = false) MessageRequestDto messageRequest,
+                                                            @PathVariable Long chatId,
+                                                            @RequestParam(value = "file", required = false) MultipartFile file) {
+        return ResponseEntity.status(HttpStatus.CREATED).body(messageService.sendMessage(messageRequest, chatId, file));
+    }
+
+    @GetMapping("/{chatId}/messages")
     public List<MessageResponseDto> getAllMessages(@PathVariable Long chatId) {
         return messageService.getAllMessages(chatId);
     }

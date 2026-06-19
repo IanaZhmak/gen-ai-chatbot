@@ -8,11 +8,8 @@ import org.springframework.data.repository.query.Param;
 import java.util.List;
 
 public interface MessageRepository extends JpaRepository<Message, Long> {
-//    List<Message> findByChatIdOrderByCreatedAtAsc(Long chatId);
+    List<Message> findByChatIdOrderByCreatedAtAsc(Long chatId);
 
-    @Query(value = "SELECT * FROM message WHERE chat_id = :chatId ORDER BY created_at ASC", nativeQuery = true)
-    List<Message> findByChatIdOrderByCreatedAtAsc(@Param("chatId") Long chatId);
-
-    @Query(value = "SELECT * FROM chatbot_db.message WHERE chat_id = :chatId ORDER BY id DESC LIMIT 1", nativeQuery = true)
+    @Query(value = "SELECT * FROM message WHERE chat_id = :chatId ORDER BY id DESC LIMIT 1", nativeQuery = true)
     Message findByChatIdLastMessage(@Param("chatId") Long chatId);
 }
