@@ -489,3 +489,20 @@ select:focus { border-color: var(--accent); }
 }
 .chunk-item .chunk-source { color: var(--accent); font-size: .75rem; margin-bottom: 4px; }
 .chunk-item .chunk-text { line-height: 1.5; }
+
+.chat-mode-description {
+  margin: 12px 20px 0 20px;
+  padding: 12px 16px;
+  background: rgba(99, 102, 241, 0.08);
+  border: 1px solid rgba(99, 102, 241, 0.18);
+  border-radius: 12px;
+  color: #cfd6f6;
+  font-size: 14px;
+  line-height: 1.5;
+  max-width: 720px;
+}
+
+.chat-mode-description strong {
+  color: #ffffff;
+  font-weight: 600;
+}

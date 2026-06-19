@@ -22,6 +22,11 @@ const sourcesList     = $('sources-list');
 const sourcesCount    = $('sources-count');
 const modalOverlay    = $('modal-overlay');
 
+//-----NEW----
+const modeDisplay     = $('mode-display');
+const modeDescription = $('chat-mode-description');
+const sourcesBar      = $('sources-bar');
+
 // ─── Init ─────────────────────────────────────────
 (async function init() {
   createToastContainer();
@@ -55,7 +60,7 @@ async function apiFetch(path, opts = {}) {
 async function loadChatModels() {
   try {
     chatModels = await apiFetch('/api/models/chat');
-    populateModelSelect(modelSelect);
+//    populateModelSelect(modelSelect);
     populateModelSelect($('new-chat-model'));
   } catch (e) {
     console.warn('Could not load chat models', e);
@@ -68,7 +73,7 @@ function populateModelSelect(sel) {
   chatModels.forEach(m => {
     const opt = document.createElement('option');
     opt.value = m.key;
-    opt.textContent = `${m.model}`;
+    opt.textContent = `${m.mode}`;
     sel.appendChild(opt);
   });
 }
@@ -135,7 +140,8 @@ function renderChatList(chats) {
 async function openChat(chat) {
   currentChatId = chat.id;
   chatTitleDisplay.textContent = chat.title;
-  modelSelect.value = chat.modelKey;
+//  modelSelect.value = chat.modeKey;
+updateModeUi(chat.modeKey);
 
   emptyState.classList.add('hidden');
   chatView.classList.remove('hidden');
@@ -145,14 +151,69 @@ async function openChat(chat) {
     el.classList.toggle('active', Number(el.dataset.chatId) === currentChatId);
   });
 
-  await Promise.all([loadMessages(), loadSources()]);
+//  await Promise.all([loadMessages(), loadSources()]);
+await loadMessages();
+
+const normalizedMode = normalizeModeKey(chat.modeKey);
+
+if (normalizedMode === 'RAGCHAT') {
+  await loadSources();
+} else {
+  sourcesCount.textContent = '0';
+  sourcesList.innerHTML = '';
+}
 }
 
-async function createChat(title, modelKey) {
+function normalizeModeKey(modeKey) {
+  if (!modeKey) return '';
+  return String(modeKey).replace(/[-_ ]/g, '').toUpperCase();
+}
+
+function updateModeUi(modeKey) {
+  const normalized = normalizeModeKey(modeKey);
+
+  const descriptions = {
+    SIMPLECHAT: 'Simple Chat — regular conversation with AI only. No RAG, no memory, no tools.',
+    PROMPTBASEDCHAT: 'Prompt Based Chat — response follows a predefined role and prompt structure.',
+    RAGCHAT: 'RAG Chat — answers are based on retrieved document context.',
+    TOOLSCHAT: 'Tools Chat — the assistant can call external tools or APIs.',
+    MEMORYCHAT: 'Memory Chat — the assistant remembers previous messages in the same conversation.'
+  };
+
+  const labels = {
+    SIMPLECHAT: 'Simple Chat',
+    PROMPTBASEDCHAT: 'Prompt Based Chat',
+    RAGCHAT: 'RAG Chat',
+    TOOLSCHAT: 'Tools Chat',
+    MEMORYCHAT: 'Memory Chat'
+  };
+
+  if (modeDisplay) {
+    modeDisplay.textContent = labels[normalized] || modeKey;
+  }
+
+  if (modeDescription) {
+    modeDescription.textContent = descriptions[normalized] || '';
+  }
+
+//if (modeDescription) {
+//  modeDescription.innerHTML = descriptions[modeKey] || '';
+//}
+
+  if (sourcesBar) {
+    if (normalized === 'RAGCHAT') {
+      sourcesBar.classList.remove('hidden');
+    } else {
+      sourcesBar.classList.add('hidden');
+    }
+  }
+}
+
+async function createChat(title, modeKey) {
   try {
     const chat = await apiFetch('/api/chats', {
       method: 'POST',
-      body: JSON.stringify({ title, modelKey })
+      body: JSON.stringify({ title, modeKey })
     });
     await loadChatList();
     openChat(chat);
@@ -569,9 +630,9 @@ function bindEvents() {
   });
 
   // Model select change
-  modelSelect.addEventListener('change', () => {
-    if (currentChatId) changeModel(currentChatId, modelSelect.value);
-  });
+//  modelSelect.addEventListener('change', () => {
+//    if (currentChatId) changeModel(currentChatId, modelSelect.value);
+//  });
 
   // Plus menu
   $('btn-plus').addEventListener('click', e => {

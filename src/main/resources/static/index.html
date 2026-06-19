@@ -28,14 +28,18 @@
 
     <!-- Chat view (hidden until chat selected) -->
     <div id="chat-view" class="hidden">
-      <!-- Top bar: title + model selector -->
+      <!-- Top bar: title + mode selector -->
       <div id="chat-topbar">
         <span id="chat-title-display"></span>
         <div id="model-selector-wrap">
-          <label for="model-select">Model:</label>
-          <select id="model-select"></select>
+<!--          <label for="model-select">Mode:</label>-->
+<!--          <select id="model-select"></select>-->
+          <span>Mode:</span>
+          <span id="mode-display"></span>
         </div>
       </div>
+
+      <div id="chat-mode-description" class="chat-mode-description"></div>
 
       <!-- Messages area -->
       <div id="messages-area"></div>
@@ -109,7 +113,7 @@
   <div id="modal-new-chat" class="modal hidden">
     <h3>New Chat</h3>
     <label>Title <input type="text" id="new-chat-title" placeholder="My Chat"/></label>
-    <label>Model <select id="new-chat-model"></select></label>
+    <label>AI Mode <select id="new-chat-model"></select></label>
     <div class="modal-actions">
       <button id="btn-new-chat-cancel" class="btn-secondary">Cancel</button>
       <button id="btn-new-chat-create" class="btn-primary">Create</button>
