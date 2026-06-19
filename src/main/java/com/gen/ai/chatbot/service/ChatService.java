@@ -4,11 +4,9 @@ import com.gen.ai.chatbot.entity.Mode;
 import com.gen.ai.chatbot.dto.chat.ChatRequestDto;
 import com.gen.ai.chatbot.dto.chat.ChatResponseDto;
 import com.gen.ai.chatbot.entity.Chat;
+import com.gen.ai.chatbot.exception.ChatNotFoundException;
 import com.gen.ai.chatbot.repository.ChatRepository;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestBody;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -16,10 +14,13 @@ import java.util.List;
 @Service
 public class ChatService {
 
-    @Autowired
-    private ChatRepository chatRepository;
+    private final ChatRepository chatRepository;
 
-    public ChatResponseDto createNewChat(@RequestBody ChatRequestDto requestDto) {
+    public ChatService(ChatRepository chatRepository) {
+        this.chatRepository = chatRepository;
+    }
+
+    public ChatResponseDto createNewChat(ChatRequestDto requestDto) {
         Mode mode = Mode.fromKey(requestDto.modeKey());
         Chat chat = new Chat();
         chat.title = requestDto.title();
@@ -37,8 +38,8 @@ public class ChatService {
         return chatResponse;
     }
 
-    public ChatResponseDto updateChat(@PathVariable Long chatId, @RequestBody ChatRequestDto requestDto) {
-        Chat chat = chatRepository.findById(chatId).orElseThrow();
+    public ChatResponseDto updateChat(Long chatId, ChatRequestDto requestDto) {
+        Chat chat = chatRepository.findById(chatId).orElseThrow(() -> new ChatNotFoundException(chatId));
 
         if (requestDto.title() != null) {
             chat.title = requestDto.title();
@@ -51,8 +52,8 @@ public class ChatService {
         return new ChatResponseDto(updatedChat.id, updatedChat.title, updatedChat.modeKey);
     }
 
-    public void deleteChat(@PathVariable Long chatId) {
-        chatRepository.delete(chatRepository.findById(chatId).orElseThrow());
+    public void deleteChat(Long chatId) {
+        chatRepository.delete(chatRepository.findById(chatId).orElseThrow(() -> new ChatNotFoundException(chatId)));
     }
 
 }
