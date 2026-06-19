@@ -3,34 +3,40 @@ package com.gen.ai.chatbot.controller;
 import com.gen.ai.chatbot.dto.chat.ChatRequestDto;
 import com.gen.ai.chatbot.dto.chat.ChatResponseDto;
 import com.gen.ai.chatbot.service.ChatService;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
 @RestController
+@RequestMapping("/api/chats")
 public class ChatController {
 
-    @Autowired
-    private ChatService chatService;
+    private final ChatService chatService;
 
-    @PostMapping("/api/chats")
-    public ChatResponseDto createChat(@RequestBody ChatRequestDto requestDto) {
-        return chatService.createNewChat(requestDto);
+    public ChatController(ChatService chatService) {
+        this.chatService = chatService;
     }
 
-    @GetMapping("/api/chats")
+    @PostMapping
+    public ResponseEntity<ChatResponseDto> createChat(@RequestBody ChatRequestDto requestDto) {
+        return ResponseEntity.status(HttpStatus.CREATED).body(chatService.createNewChat(requestDto));
+    }
+
+    @GetMapping
     public List<ChatResponseDto> getAllChats() {
         return chatService.getAllChats();
     }
 
-    @PatchMapping("/api/chats/{chatId}")
+    @PatchMapping("/{chatId}")
     public ChatResponseDto updateChat(@PathVariable Long chatId, @RequestBody ChatRequestDto requestDto) {
         return chatService.updateChat(chatId, requestDto);
     }
 
-    @DeleteMapping("/api/chats/{chatId}")
-    public void deleteChat(@PathVariable Long chatId) {
+    @DeleteMapping("/{chatId}")
+    public ResponseEntity<Void> deleteChat(@PathVariable Long chatId) {
         chatService.deleteChat(chatId);
+        return ResponseEntity.noContent().build();
     }
 }
