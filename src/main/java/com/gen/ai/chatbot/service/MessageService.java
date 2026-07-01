@@ -8,8 +8,10 @@ import com.gen.ai.chatbot.entity.Message;
 import com.gen.ai.chatbot.exception.ChatNotFoundException;
 import com.gen.ai.chatbot.repository.ChatRepository;
 import com.gen.ai.chatbot.repository.MessageRepository;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -22,6 +24,8 @@ public class MessageService {
     private final AnswerService answerService;
     private final RagChatService ragChatService;
 
+    private static final int MAX_MESSAGE_LENGTH = 2000;
+
     public MessageService(MessageRepository messageRepository, ChatRepository chatRepository,
                           AnswerService answerService, RagChatService ragChatService) {
         this.messageRepository = messageRepository;
@@ -31,6 +35,8 @@ public class MessageService {
     }
 
     public MessageResponseDto sendMessage(MessageRequestDto messageRequest, Long chatId, MultipartFile file) {
+        validateMessageLength(messageRequest);
+
         Chat chat = chatRepository.findById(chatId).orElseThrow(() -> new ChatNotFoundException(chatId));
 
         Message question = new Message();
@@ -57,5 +63,18 @@ public class MessageService {
             response.add(new MessageResponseDto(message.role.name(), message.text, message.fileName));
         }
         return response;
+    }
+
+    private void validateMessageLength(MessageRequestDto messageRequest) {
+        if (messageRequest == null || messageRequest.question() == null) {
+            return;
+        }
+
+        if (messageRequest.question().length() > MAX_MESSAGE_LENGTH) {
+            throw new ResponseStatusException(
+                    HttpStatus.BAD_REQUEST,
+                    "Message is too long for demo mode. Maximum length is 2000 characters."
+            );
+        }
     }
 }

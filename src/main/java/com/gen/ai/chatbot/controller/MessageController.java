@@ -3,6 +3,8 @@ package com.gen.ai.chatbot.controller;
 import com.gen.ai.chatbot.dto.message.MessageRequestDto;
 import com.gen.ai.chatbot.dto.message.MessageResponseDto;
 import com.gen.ai.chatbot.service.MessageService;
+import com.gen.ai.chatbot.service.RateLimiterService;
+import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -15,15 +17,19 @@ import java.util.List;
 public class MessageController {
 
     private final MessageService messageService;
+    private final RateLimiterService rateLimiterService;
 
-    public MessageController(MessageService messageService) {
+    public MessageController(MessageService messageService, RateLimiterService rateLimiterService) {
         this.messageService = messageService;
+        this.rateLimiterService = rateLimiterService;
     }
 
     @PostMapping("/{chatId}/messages")
     public ResponseEntity<MessageResponseDto> createMessage(@RequestParam(value = "question", required = false) MessageRequestDto messageRequest,
                                                             @PathVariable Long chatId,
-                                                            @RequestParam(value = "file", required = false) MultipartFile file) {
+                                                            @RequestParam(value = "file", required = false) MultipartFile file,
+                                                            HttpServletRequest request) {
+        rateLimiterService.checkLimit(request.getRemoteAddr());
         return ResponseEntity.status(HttpStatus.CREATED).body(messageService.sendMessage(messageRequest, chatId, file));
     }
 

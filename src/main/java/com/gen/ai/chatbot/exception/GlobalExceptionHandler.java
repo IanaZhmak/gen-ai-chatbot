@@ -12,4 +12,11 @@ public class GlobalExceptionHandler {
     public ResponseEntity<String> handleNotFound(ChatNotFoundException ex) {
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(ex.getMessage());
     }
+
+    @ExceptionHandler(RateLimitException.class)
+    public ResponseEntity<String> handleRateLimit(RateLimitException ex) {
+        return ResponseEntity
+                .status(HttpStatus.TOO_MANY_REQUESTS)
+                .body(ex.getMessage());
+    }
 }
